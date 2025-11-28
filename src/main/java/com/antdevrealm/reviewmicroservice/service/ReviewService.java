@@ -57,7 +57,6 @@ public class ReviewService {
                 reviewEntity.getBody());
     }
 
-
     public void delete(UUID id) {
         ReviewEntity reviewEntity = this.reviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Review with ID: %s not found", id)));
