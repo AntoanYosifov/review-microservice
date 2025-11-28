@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public record CreateReviewRequestDTO(
+public record CreateRequestDTO(
         @NotNull(message = "Author ID is required")
         UUID authorId,
 

@@ -11,9 +11,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 
-@Entity
+@jakarta.persistence.Entity
 @Table(name = "reviews")
-public class ReviewEntity {
+public class Entity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
