@@ -1,5 +1,6 @@
 package com.antdevrealm.reviewmicroservice.web;
 
+import com.antdevrealm.reviewmicroservice.exception.ResourceNotFoundException;
 import com.antdevrealm.reviewmicroservice.service.ReviewService;
 import com.antdevrealm.reviewmicroservice.web.dto.CreateRequestDTO;
 import com.antdevrealm.reviewmicroservice.web.dto.ResponseDTO;
@@ -15,8 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -51,6 +51,20 @@ public class ControllerATest {
                 .andExpect(jsonPath("$.authorId").value(authorId.toString()))
                 .andExpect(jsonPath("$.subjectId").value(subjectId.toString()))
                 .andExpect(jsonPath("$.body").value(body));
+    }
+
+    @Test
+    void whenGetById_andReviewDoesNotExist_thenReturnsNotFound() throws Exception {
+        UUID reviewId = UUID.randomUUID();
+        String errorMessage = String.format("Review with ID: %s not found", reviewId);
+
+        when(reviewService.getById(reviewId)).thenThrow(new ResourceNotFoundException(errorMessage));
+
+        mockMvc.perform(get("/api/v1/reviews/{id}", reviewId))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Resource Not Found"))
+                .andExpect(jsonPath("$.detail").value(errorMessage));
     }
 
     @Test
@@ -105,6 +119,20 @@ public class ControllerATest {
     }
 
     @Test
+    void whenCreateReview_andInvalidDtoProvided_thenReturnsBadRequest() throws Exception {
+        String invalidJson = "{\"authorId\":null,\"subjectId\":null,\"body\":\"\"}";
+
+        mockMvc.perform(post("/api/v1/reviews")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Validation Error"))
+                .andExpect(jsonPath("$.detail").value("One or more fields have invalid values"))
+                .andExpect(jsonPath("$.errors").exists());
+    }
+
+    @Test
     void whenDeleteReview_andReviewExists_thenReturnsNoContent() throws Exception {
         UUID reviewId = UUID.randomUUID();
 
@@ -112,6 +140,20 @@ public class ControllerATest {
                 .andExpect(status().isNoContent());
 
         verify(reviewService).delete(reviewId);
+    }
+
+    @Test
+    void whenDeleteReview_andReviewDoesNotExist_thenReturnsNotFound() throws Exception {
+        UUID reviewId = UUID.randomUUID();
+        String errorMessage = String.format("Review with ID: %s not found", reviewId);
+
+        doThrow(new ResourceNotFoundException(errorMessage)).when(reviewService).delete(reviewId);
+
+        mockMvc.perform(delete("/api/v1/reviews/{id}", reviewId))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Resource Not Found"))
+                .andExpect(jsonPath("$.detail").value(errorMessage));
     }
 }
 
