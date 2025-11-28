@@ -15,7 +15,9 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -100,6 +102,16 @@ public class ControllerATest {
                 .andExpect(jsonPath("$.authorId").value(authorId.toString()))
                 .andExpect(jsonPath("$.subjectId").value(subjectId.toString()))
                 .andExpect(jsonPath("$.body").value(body));
+    }
+
+    @Test
+    void whenDeleteReview_andReviewExists_thenReturnsNoContent() throws Exception {
+        UUID reviewId = UUID.randomUUID();
+
+        mockMvc.perform(delete("/api/v1/reviews/{id}", reviewId))
+                .andExpect(status().isNoContent());
+
+        verify(reviewService).delete(reviewId);
     }
 }
 
