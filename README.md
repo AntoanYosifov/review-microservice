@@ -11,7 +11,6 @@ A RESTful microservice built with Spring Boot for managing product reviews in th
 - [Running the Application](#running-the-application)
 - [API Documentation](#api-documentation)
 - [Testing](#testing)
-- [Project Structure](#project-structure)
 
 ## 🎯 Overview
 
@@ -302,45 +301,6 @@ The project maintains **88% line coverage** with a balanced distribution across:
 ### Test Database
 
 Tests use **H2 in-memory database** configured in `src/test/resources/application.properties`. No external database setup is required for running tests.
-
-## 📁 Project Structure
-
-```
-review-microservice/
-├── src/
-│   ├── main/
-│   │   ├── java/com/antdevrealm/reviewmicroservice/
-│   │   │   ├── exception/
-│   │   │   │   ├── GlobalExceptionHandler.java      # Global exception handling
-│   │   │   │   └── ResourceNotFoundException.java  # Custom exception
-│   │   │   ├── model/
-│   │   │   │   └── ReviewEntity.java                # JPA entity
-│   │   │   ├── repository/
-│   │   │   │   └── ReviewRepository.java            # Spring Data JPA repository
-│   │   │   ├── service/
-│   │   │   │   └── ReviewService.java                # Business logic
-│   │   │   ├── web/
-│   │   │   │   ├── Controller.java                  # REST controller
-│   │   │   │   └── dto/
-│   │   │   │       ├── CreateRequestDTO.java        # Request DTO
-│   │   │   │       └── ResponseDTO.java             # Response DTO
-│   │   │   └── ReviewMicroserviceApplication.java   # Main application class
-│   │   └── resources/
-│   │       └── application-dev.properties            # Application configuration
-│   └── test/
-│       ├── java/com/antdevrealm/reviewmicroservice/
-│       │   ├── service/
-│       │   │   ├── ReviewServiceUTest.java           # Unit tests
-│       │   │   └── ReviewServiceITest.java           # Integration tests
-│       │   └── web/
-│       │       └── ControllerATest.java              # API tests
-│       └── resources/
-│           └── application.properties                 # Test configuration (H2)
-├── build.gradle                                      # Build configuration
-├── gradlew                                           # Gradle wrapper (Unix)
-├── gradlew.bat                                       # Gradle wrapper (Windows)
-└── README.md                                         # This file
-```
 
 ## 🔧 Configuration
 
