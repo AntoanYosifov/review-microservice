@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.Mockito.when;
@@ -41,6 +42,33 @@ public class ControllerATest {
                 .andExpect(jsonPath("$.authorId").value(authorId.toString()))
                 .andExpect(jsonPath("$.subjectId").value(subjectId.toString()))
                 .andExpect(jsonPath("$.body").value(body));
+    }
+
+    @Test
+    void whenGetAllBySubjectId_andReviewsExist_thenReturnsOkWithResponseDTOList() throws Exception {
+        UUID subjectId = UUID.randomUUID();
+        UUID authorId1 = UUID.randomUUID();
+        UUID authorId2 = UUID.randomUUID();
+        UUID reviewId1 = UUID.randomUUID();
+        UUID reviewId2 = UUID.randomUUID();
+
+        ResponseDTO responseDTO1 = new ResponseDTO(reviewId1, authorId1, subjectId, "First review");
+        ResponseDTO responseDTO2 = new ResponseDTO(reviewId2, authorId2, subjectId, "Second review");
+        List<ResponseDTO> responseDTOs = List.of(responseDTO1, responseDTO2);
+
+        when(reviewService.getAllBySubjectId(subjectId)).thenReturn(responseDTOs);
+
+        mockMvc.perform(get("/api/v1/reviews/subject/{id}", subjectId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").value(reviewId1.toString()))
+                .andExpect(jsonPath("$[0].authorId").value(authorId1.toString()))
+                .andExpect(jsonPath("$[0].body").value("First review"))
+                .andExpect(jsonPath("$[1].id").value(reviewId2.toString()))
+                .andExpect(jsonPath("$[1].authorId").value(authorId2.toString()))
+                .andExpect(jsonPath("$[1].body").value("Second review"));
     }
 }
 
