@@ -1,11 +1,14 @@
 package com.antdevrealm.reviewmicroservice.service;
 
+import com.antdevrealm.reviewmicroservice.exception.ResourceNotFoundException;
 import com.antdevrealm.reviewmicroservice.model.ReviewEntity;
 import com.antdevrealm.reviewmicroservice.repository.ReviewRepository;
 import com.antdevrealm.reviewmicroservice.web.dto.CreateReviewRequestDTO;
 import com.antdevrealm.reviewmicroservice.web.dto.ReviewResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class ReviewService {
@@ -14,6 +17,13 @@ public class ReviewService {
     @Autowired
     public ReviewService(ReviewRepository reviewRepository) {
         this.reviewRepository = reviewRepository;
+    }
+
+    public ReviewResponseDTO getById(UUID id) {
+        ReviewEntity reviewEntity = this.reviewRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Review with ID: %s not found", id)));
+
+        return mapToResponseDto(reviewEntity);
     }
 
     public ReviewResponseDTO create(CreateReviewRequestDTO dto) {

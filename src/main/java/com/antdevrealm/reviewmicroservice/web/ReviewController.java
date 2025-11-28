@@ -6,12 +6,10 @@ import com.antdevrealm.reviewmicroservice.web.dto.ReviewResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/reviews")
@@ -21,6 +19,13 @@ public class ReviewController {
     @Autowired
     public ReviewController(ReviewService reviewService) {
         this.reviewService = reviewService;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ReviewResponseDTO> getById(@PathVariable UUID id) {
+        ReviewResponseDTO responseDTO = this.reviewService.getById(id);
+
+        return ResponseEntity.ok(responseDTO);
     }
 
     @PostMapping
