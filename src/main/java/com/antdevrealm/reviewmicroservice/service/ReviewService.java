@@ -5,6 +5,7 @@ import com.antdevrealm.reviewmicroservice.model.ReviewEntity;
 import com.antdevrealm.reviewmicroservice.repository.ReviewRepository;
 import com.antdevrealm.reviewmicroservice.web.dto.CreateRequestDTO;
 import com.antdevrealm.reviewmicroservice.web.dto.ResponseDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class ReviewService {
     private final ReviewRepository reviewRepository;
@@ -31,15 +33,30 @@ public class ReviewService {
     public List<ResponseDTO> getAllBySubjectId(UUID subjectId) {
         List<ReviewEntity> entities = this.reviewRepository.findAllBySubjectId(subjectId);
         if (entities.isEmpty()) {
+            log.info("No reviews found for subjectId={}", subjectId);
             return new ArrayList<>();
         }
-
+        log.info("No reviews found for subjectId={}", subjectId);
         return entities.stream().map(this::mapToResponseDto).toList();
     }
 
     public ResponseDTO create(CreateRequestDTO dto) {
         ReviewEntity reviewEntity = this.mapToEntity(dto);
-        return mapToResponseDto(this.reviewRepository.save(reviewEntity));
+        ReviewEntity saved = this.reviewRepository.save(reviewEntity);
+
+        log.info("Review created: id={}, authorId={}, subjectId={}",
+                saved.getId(), saved.getAuthorId(), saved.getSubjectId());
+
+        return mapToResponseDto(saved);
+    }
+
+    public void delete(UUID id) {
+        ReviewEntity reviewEntity = this.reviewRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Review with ID: %s not found", id)));
+
+        this.reviewRepository.delete(reviewEntity);
+        log.info("Review deleted: id={}, authorId={}, subjectId={}",
+                reviewEntity.getId(), reviewEntity.getAuthorId(), reviewEntity.getSubjectId());
     }
 
     private ReviewEntity mapToEntity(CreateRequestDTO dto) {
@@ -55,12 +72,5 @@ public class ReviewService {
                 reviewEntity.getAuthorId(),
                 reviewEntity.getSubjectId(),
                 reviewEntity.getBody());
-    }
-
-    public void delete(UUID id) {
-        ReviewEntity reviewEntity = this.reviewRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Review with ID: %s not found", id)));
-
-        this.reviewRepository.delete(reviewEntity);
     }
 }
