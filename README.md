@@ -152,6 +152,7 @@ GET /api/v1/reviews/{id}
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
   "authorId": "550e8400-e29b-41d4-a716-446655440001",
+  "authorName": "John Doe",
   "subjectId": "550e8400-e29b-41d4-a716-446655440002",
   "body": "Great product, highly recommend!"
 }
@@ -172,12 +173,14 @@ GET /api/v1/reviews/subject/{id}
   {
     "id": "550e8400-e29b-41d4-a716-446655440000",
     "authorId": "550e8400-e29b-41d4-a716-446655440001",
+    "authorName": "John Doe",
     "subjectId": "550e8400-e29b-41d4-a716-446655440002",
     "body": "First review"
   },
   {
     "id": "550e8400-e29b-41d4-a716-446655440003",
     "authorId": "550e8400-e29b-41d4-a716-446655440004",
+    "authorName": "Jane Smith",
     "subjectId": "550e8400-e29b-41d4-a716-446655440002",
     "body": "Second review"
   }
@@ -198,6 +201,7 @@ Content-Type: application/json
 ```json
 {
   "authorId": "550e8400-e29b-41d4-a716-446655440001",
+  "authorName": "John Doe",
   "subjectId": "550e8400-e29b-41d4-a716-446655440002",
   "body": "Excellent quality product!"
 }
@@ -205,6 +209,7 @@ Content-Type: application/json
 
 **Validation Rules:**
 - `authorId`: Required, must be a valid UUID
+- `authorName`: Required, must not be blank
 - `subjectId`: Required, must be a valid UUID
 - `body`: Required, must not be blank
 
@@ -250,6 +255,7 @@ All error responses follow the Problem Details format (RFC 7807):
   "timestamp": "2024-01-01T12:00:00Z",
   "errors": {
     "authorId": "Author ID is required",
+    "authorName": "Author name is required",
     "body": "Review body is required"
   }
 }
@@ -293,7 +299,7 @@ build/reports/tests/test/index.html
 
 ### Test Coverage
 
-The project maintains **88% line coverage** with a balanced distribution across:
+The project maintains **90% line coverage** with a balanced distribution across:
 - Unit tests
 - Integration tests
 - API tests
@@ -318,7 +324,7 @@ Tests use **H2 in-memory database** configured in `src/test/resources/applicatio
 
 ## 📝 Notes for Examiners
 
-- All tests are passing and maintain 88% code coverage
+- All tests are passing and maintain 90% code coverage
 - The application uses environment variables for database credentials (see [Setup Instructions](#setup-instructions))
 - Tests are isolated and use H2 in-memory database - no external setup required
 - The service follows RESTful principles with proper HTTP status codes
