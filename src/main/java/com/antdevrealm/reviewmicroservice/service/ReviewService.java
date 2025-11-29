@@ -36,7 +36,7 @@ public class ReviewService {
             log.info("No reviews found for subjectId={}", subjectId);
             return new ArrayList<>();
         }
-        log.info("No reviews found for subjectId={}", subjectId);
+        log.info("Found {} reviews for subjectId={}", entities.size(), subjectId);
         return entities.stream().map(this::mapToResponseDto).toList();
     }
 
