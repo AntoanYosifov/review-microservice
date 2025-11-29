@@ -22,6 +22,9 @@ public class ReviewEntity {
     private UUID authorId;
 
     @Column(nullable = false)
+    private String authorName;
+
+    @Column(nullable = false)
     private UUID subjectId;
 
     @Column(nullable = false)

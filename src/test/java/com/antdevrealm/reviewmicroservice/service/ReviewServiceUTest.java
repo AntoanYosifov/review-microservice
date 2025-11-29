@@ -43,11 +43,13 @@ public class ReviewServiceUTest {
         UUID reviewId = UUID.randomUUID();
         UUID authorId = UUID.randomUUID();
         UUID subjectId = UUID.randomUUID();
+        String authorName = "John Doe";
         String body = "Great product!";
 
         ReviewEntity reviewEntity = ReviewEntity.builder()
                 .id(reviewId)
                 .authorId(authorId)
+                .authorName(authorName)
                 .subjectId(subjectId)
                 .body(body)
                 .build();
@@ -58,6 +60,7 @@ public class ReviewServiceUTest {
 
         assertEquals(reviewId, result.id());
         assertEquals(authorId, result.authorId());
+        assertEquals(authorName, result.authorName());
         assertEquals(subjectId, result.subjectId());
         assertEquals(body, result.body());
     }
@@ -83,6 +86,7 @@ public class ReviewServiceUTest {
         ReviewEntity reviewEntity1 = ReviewEntity.builder()
                 .id(reviewId1)
                 .authorId(authorId1)
+                .authorName("John Doe")
                 .subjectId(subjectId)
                 .body("First review")
                 .build();
@@ -90,6 +94,7 @@ public class ReviewServiceUTest {
         ReviewEntity reviewEntity2 = ReviewEntity.builder()
                 .id(reviewId2)
                 .authorId(authorId2)
+                .authorName("Jane Smith")
                 .subjectId(subjectId)
                 .body("Second review")
                 .build();
@@ -102,9 +107,11 @@ public class ReviewServiceUTest {
         assertEquals(2, result.size());
         assertEquals(reviewId1, result.get(0).id());
         assertEquals(authorId1, result.get(0).authorId());
+        assertEquals("John Doe", result.get(0).authorName());
         assertEquals("First review", result.get(0).body());
         assertEquals(reviewId2, result.get(1).id());
         assertEquals(authorId2, result.get(1).authorId());
+        assertEquals("Jane Smith", result.get(1).authorName());
         assertEquals("Second review", result.get(1).body());
     }
 
@@ -112,13 +119,15 @@ public class ReviewServiceUTest {
     void whenCreate_andDtoProvided_thenMapsToEntitySavesAndReturnsResponseDTO() {
         UUID authorId = UUID.randomUUID();
         UUID subjectId = UUID.randomUUID();
+        String authorName = "John Doe";
         String body = "Excellent quality!";
 
-        CreateRequestDTO dto = new CreateRequestDTO(authorId, subjectId, body);
+        CreateRequestDTO dto = new CreateRequestDTO(authorId, authorName, subjectId, body);
 
         ReviewEntity savedEntity = ReviewEntity.builder()
                 .id(UUID.randomUUID())
                 .authorId(authorId)
+                .authorName(authorName)
                 .subjectId(subjectId)
                 .body(body)
                 .build();
@@ -129,6 +138,7 @@ public class ReviewServiceUTest {
 
         assertNotNull(result.id());
         assertEquals(authorId, result.authorId());
+        assertEquals(authorName, result.authorName());
         assertEquals(subjectId, result.subjectId());
         assertEquals(body, result.body());
         verify(reviewRepository).save(any(ReviewEntity.class));
@@ -148,6 +158,7 @@ public class ReviewServiceUTest {
         ReviewEntity reviewEntity = ReviewEntity.builder()
                 .id(reviewId)
                 .authorId(UUID.randomUUID())
+                .authorName("John Doe")
                 .subjectId(UUID.randomUUID())
                 .body("Review to delete")
                 .build();

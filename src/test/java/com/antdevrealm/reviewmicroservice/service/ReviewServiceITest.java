@@ -24,20 +24,23 @@ public class ReviewServiceITest {
     void whenCreateReview_andDtoProvided_thenReviewIsSavedAndCanBeRetrievedById() {
         UUID authorId = UUID.randomUUID();
         UUID subjectId = UUID.randomUUID();
+        String authorName = "John Doe";
         String body = "Great product, highly recommend!";
 
-        CreateRequestDTO dto = new CreateRequestDTO(authorId, subjectId, body);
+        CreateRequestDTO dto = new CreateRequestDTO(authorId, authorName, subjectId, body);
 
         ResponseDTO created = reviewService.create(dto);
 
         assertNotNull(created.id());
         assertEquals(authorId, created.authorId());
+        assertEquals(authorName, created.authorName());
         assertEquals(subjectId, created.subjectId());
         assertEquals(body, created.body());
 
         ResponseDTO retrieved = reviewService.getById(created.id());
         assertEquals(created.id(), retrieved.id());
         assertEquals(authorId, retrieved.authorId());
+        assertEquals(authorName, retrieved.authorName());
         assertEquals(subjectId, retrieved.subjectId());
         assertEquals(body, retrieved.body());
     }
@@ -48,8 +51,8 @@ public class ReviewServiceITest {
         UUID authorId1 = UUID.randomUUID();
         UUID authorId2 = UUID.randomUUID();
 
-        CreateRequestDTO dto1 = new CreateRequestDTO(authorId1, subjectId, "First review");
-        CreateRequestDTO dto2 = new CreateRequestDTO(authorId2, subjectId, "Second review");
+        CreateRequestDTO dto1 = new CreateRequestDTO(authorId1, "John Doe", subjectId, "First review");
+        CreateRequestDTO dto2 = new CreateRequestDTO(authorId2, "Jane Smith", subjectId, "Second review");
 
         ResponseDTO review1 = reviewService.create(dto1);
         ResponseDTO review2 = reviewService.create(dto2);
@@ -74,7 +77,7 @@ public class ReviewServiceITest {
     void whenDeleteReview_andReviewExists_thenReviewIsDeleted() {
         UUID authorId = UUID.randomUUID();
         UUID subjectId = UUID.randomUUID();
-        CreateRequestDTO dto = new CreateRequestDTO(authorId, subjectId, "Review to delete");
+        CreateRequestDTO dto = new CreateRequestDTO(authorId, "John Doe", subjectId, "Review to delete");
 
         ResponseDTO created = reviewService.create(dto);
         UUID reviewId = created.id();

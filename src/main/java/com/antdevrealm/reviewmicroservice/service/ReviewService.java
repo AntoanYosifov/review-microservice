@@ -62,6 +62,7 @@ public class ReviewService {
     private ReviewEntity mapToEntity(CreateRequestDTO dto) {
         return ReviewEntity.builder()
                 .authorId(dto.authorId())
+                .authorName(dto.authorName())
                 .subjectId(dto.subjectId())
                 .body(dto.body())
                 .build();
@@ -70,6 +71,7 @@ public class ReviewService {
     private ResponseDTO mapToResponseDto(ReviewEntity reviewEntity) {
         return new ResponseDTO(reviewEntity.getId(),
                 reviewEntity.getAuthorId(),
+                reviewEntity.getAuthorName(),
                 reviewEntity.getSubjectId(),
                 reviewEntity.getBody());
     }

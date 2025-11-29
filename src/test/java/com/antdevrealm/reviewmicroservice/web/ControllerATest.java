@@ -39,9 +39,10 @@ public class ControllerATest {
         UUID reviewId = UUID.randomUUID();
         UUID authorId = UUID.randomUUID();
         UUID subjectId = UUID.randomUUID();
+        String authorName = "John Doe";
         String body = "Great product!";
 
-        ResponseDTO responseDTO = new ResponseDTO(reviewId, authorId, subjectId, body);
+        ResponseDTO responseDTO = new ResponseDTO(reviewId, authorId, authorName, subjectId, body);
         when(reviewService.getById(reviewId)).thenReturn(responseDTO);
 
         mockMvc.perform(get("/api/v1/reviews/{id}", reviewId))
@@ -49,6 +50,7 @@ public class ControllerATest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(reviewId.toString()))
                 .andExpect(jsonPath("$.authorId").value(authorId.toString()))
+                .andExpect(jsonPath("$.authorName").value(authorName))
                 .andExpect(jsonPath("$.subjectId").value(subjectId.toString()))
                 .andExpect(jsonPath("$.body").value(body));
     }
@@ -75,8 +77,8 @@ public class ControllerATest {
         UUID reviewId1 = UUID.randomUUID();
         UUID reviewId2 = UUID.randomUUID();
 
-        ResponseDTO responseDTO1 = new ResponseDTO(reviewId1, authorId1, subjectId, "First review");
-        ResponseDTO responseDTO2 = new ResponseDTO(reviewId2, authorId2, subjectId, "Second review");
+        ResponseDTO responseDTO1 = new ResponseDTO(reviewId1, authorId1, "John Doe", subjectId, "First review");
+        ResponseDTO responseDTO2 = new ResponseDTO(reviewId2, authorId2, "Jane Smith", subjectId, "Second review");
         List<ResponseDTO> responseDTOs = List.of(responseDTO1, responseDTO2);
 
         when(reviewService.getAllBySubjectId(subjectId)).thenReturn(responseDTOs);
@@ -88,9 +90,11 @@ public class ControllerATest {
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].id").value(reviewId1.toString()))
                 .andExpect(jsonPath("$[0].authorId").value(authorId1.toString()))
+                .andExpect(jsonPath("$[0].authorName").value("John Doe"))
                 .andExpect(jsonPath("$[0].body").value("First review"))
                 .andExpect(jsonPath("$[1].id").value(reviewId2.toString()))
                 .andExpect(jsonPath("$[1].authorId").value(authorId2.toString()))
+                .andExpect(jsonPath("$[1].authorName").value("Jane Smith"))
                 .andExpect(jsonPath("$[1].body").value("Second review"));
     }
 
@@ -99,10 +103,11 @@ public class ControllerATest {
         UUID authorId = UUID.randomUUID();
         UUID subjectId = UUID.randomUUID();
         UUID reviewId = UUID.randomUUID();
+        String authorName = "John Doe";
         String body = "Excellent quality product!";
 
-        CreateRequestDTO createRequestDTO = new CreateRequestDTO(authorId, subjectId, body);
-        ResponseDTO responseDTO = new ResponseDTO(reviewId, authorId, subjectId, body);
+        CreateRequestDTO createRequestDTO = new CreateRequestDTO(authorId, authorName, subjectId, body);
+        ResponseDTO responseDTO = new ResponseDTO(reviewId, authorId, authorName, subjectId, body);
 
         when(reviewService.create(any(CreateRequestDTO.class))).thenReturn(responseDTO);
 
@@ -114,13 +119,14 @@ public class ControllerATest {
                 .andExpect(header().string("Location", "/api/v1/reviews/" + reviewId))
                 .andExpect(jsonPath("$.id").value(reviewId.toString()))
                 .andExpect(jsonPath("$.authorId").value(authorId.toString()))
+                .andExpect(jsonPath("$.authorName").value(authorName))
                 .andExpect(jsonPath("$.subjectId").value(subjectId.toString()))
                 .andExpect(jsonPath("$.body").value(body));
     }
 
     @Test
     void whenCreateReview_andInvalidDtoProvided_thenReturnsBadRequest() throws Exception {
-        String invalidJson = "{\"authorId\":null,\"subjectId\":null,\"body\":\"\"}";
+        String invalidJson = "{\"authorId\":null,\"authorName\":\"\",\"subjectId\":null,\"body\":\"\"}";
 
         mockMvc.perform(post("/api/v1/reviews")
                         .contentType(MediaType.APPLICATION_JSON)
