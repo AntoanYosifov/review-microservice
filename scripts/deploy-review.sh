@@ -50,6 +50,7 @@ echo "Starting container..."
 docker run -d \
   --name hoc-review \
   --restart unless-stopped \
+  --network hoc_network \
   -p 8081:8081 \
   -e DB_HOST="$DB_HOST" \
   -e DB_NAME="$DB_NAME" \
