@@ -1,0 +1,19 @@
+services:
+  review:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: house-of-chaos-review
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - hoc_network
+
+networks:
+  hoc_network:
+    external: true
